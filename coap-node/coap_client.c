@@ -7,15 +7,14 @@
 char *service_url = "/registration";
 
 // Define a handler to handle the response from the server
-void client_chunk_handler(coap_message_t *response)
-{
-const uint8_t *chunk;
-if(response == NULL) {
-puts("Request timed out");
-return;
-}
-int len = coap_get_payload(response, &chunk);
-printf("%.*s\n", len, (char *)chunk);
+void client_chunk_handler(coap_message_t *response){
+    const uint8_t *chunk;
+    if(response == NULL) {
+        puts("Request timed out");
+        return;
+    }
+    int len = coap_get_payload(response, &chunk);
+    printf("%.*s\n", len, (char *)chunk);
 }
 
 #define LOG_MODULE "App"
@@ -46,8 +45,7 @@ PROCESS_THREAD(client, ev, data){
     // Issue the request in a blocking manner
     // The client will wait for the server to reply(or the transmission to timeout)
     while(1){
-        
-    COAP_BLOCKING_REQUEST(&server_ep, request,client_chunk_handler);
+        COAP_BLOCKING_REQUEST(&server_ep, request,client_chunk_handler);
     }
     // da qua in poi metteremo il codice del coap server.
     
