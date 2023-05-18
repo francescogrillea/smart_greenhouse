@@ -1,4 +1,3 @@
-/*---------------------------------------------------------------------------*/
 #include "contiki.h"
 #include "net/routing/routing.h"
 #include "mqtt.h"
@@ -9,10 +8,8 @@
 #include "sys/ctimer.h"
 #include "lib/sensors.h"
 #include "dev/button-hal.h"
-#include "dev/leds.h"
 #include "os/sys/log.h"
 #include "mqtt-client.h" // .h all'interno della stessa directory del .c
-
 #include <string.h>
 #include <strings.h>
 /*---------------------------------------------------------------------------*/
@@ -60,13 +57,17 @@ AUTOSTART_PROCESSES(&mqtt_client_example);
 // Buffers for Client ID and Topics. Make sure they are large enough to hold the entire respective string
 #define BUFFER_SIZE 64
 
+#define TEMPERATURE_THRESHOLD 240
+#define TEMPERATURE_THRESHOLD_OFFSET 70
+#define TEMPERATURE_THRESHOLD_STDEV 35
+
 static char client_id[BUFFER_SIZE];
 static char pub_topic[BUFFER_SIZE];
 
 static int value = 0;
 
 // Periodic timer to check the state of the MQTT client
-#define STATE_MACHINE_PERIODIC     (CLOCK_SECOND >> 1)
+#define STATE_MACHINE_PERIODIC     (CLOCK_SECOND >> 1)	// TODO - a che serve?
 
 #define PUBLISHING_INTERVAL (2 * CLOCK_SECOND)
 static struct etimer periodic_timer;
@@ -131,24 +132,6 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
 					msg_ptr->payload_chunk, msg_ptr->payload_length);
 			break;
 		}
-		case MQTT_EVENT_SUBACK: {
-			#if MQTT_311
-				mqtt_suback_event_t *suback_event = (mqtt_suback_event_t *)data;
-			
-				if(suback_event->success) {
-					printf("Application is subscribed to topic successfully\n");
-				} else {
-					printf("Application failed to subscribe to topic (ret code %x)\n", suback_event->return_code);
-				}
-			#else
-				printf("Application is subscribed to topic successfully\n");
-			#endif
-			break;
-		}
-		case MQTT_EVENT_UNSUBACK: {
-			printf("Application is unsubscribed to topic successfully\n");
-			break;
-		}
 		case MQTT_EVENT_PUBACK: {
 			printf("Publishing complete.\n");
 			break;
@@ -159,6 +142,9 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
 	}
 }
 
+
+static button_hal_button_t *btn;   //Pointer to the button
+static int variation = 0;
 
 
 PROCESS_THREAD(mqtt_client_example, ev, data){
@@ -180,11 +166,19 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
 					
 	// Initialize periodic timer to check the status 
 	etimer_set(&periodic_timer, PUBLISHING_INTERVAL);
+	btn = button_hal_get_by_index(0);  //Returns the button of index0, since we only have one button
 
   	/* Main loop */
 	while(1) {
 
 		PROCESS_YIELD();
+
+		if(ev == button_hal_press_event) {
+			btn = (button_hal_button_t*)data; //In the data field there is pointer to the button
+			variation = (100 - variation);
+			printf("Button pushed, variation: %d\n", variation);
+		}
+
 
 		if((ev == PROCESS_EVENT_TIMER && data == &periodic_timer) || 
 			ev == PROCESS_EVENT_POLL){
@@ -208,9 +202,10 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
 					
 			if(state == STATE_CONNECTED){
 				// Publish something
-				sprintf(pub_topic, "%s", "status");
+				sprintf(pub_topic, "%s", "temperature");
 				
-				// TODO - compute the temperature
+				value = (TEMPERATURE_THRESHOLD + variation) + random_rand() % (TEMPERATURE_THRESHOLD_OFFSET - TEMPERATURE_THRESHOLD_STDEV);   
+				
 				sprintf(app_buffer, "temperature %d", value);
 				printf("Publishing: %s\n", app_buffer);
 
