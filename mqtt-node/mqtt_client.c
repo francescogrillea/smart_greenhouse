@@ -72,11 +72,10 @@ static int value = 0;
 #define PUBLISHING_INTERVAL (2 * CLOCK_SECOND)
 static struct etimer periodic_timer;
 
-
 // The main MQTT buffers. We will need to increase if we start publishing more data.
 #define APP_BUFFER_SIZE 512
 static char app_buffer[APP_BUFFER_SIZE];
-/*---------------------------------------------------------------------------*/
+
 static struct mqtt_message *msg_ptr = 0;
 
 // pointer to connection
@@ -180,8 +179,7 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
 		}
 
 
-		if((ev == PROCESS_EVENT_TIMER && data == &periodic_timer) || 
-			ev == PROCESS_EVENT_POLL){
+		if((ev == PROCESS_EVENT_TIMER && data == &periodic_timer) || ev == PROCESS_EVENT_POLL){
 							
 			if(state==STATE_INIT){
 				if(have_connectivity()==true)  
@@ -206,10 +204,9 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
 				
 				value = (TEMPERATURE_THRESHOLD + variation) + random_rand() % (TEMPERATURE_THRESHOLD_OFFSET - TEMPERATURE_THRESHOLD_STDEV);   
 				
-				sprintf(app_buffer, "temperature %d", value);
+				// be careful, message too big will crash Cooja env
+				sprintf(app_buffer, "{\"temperature\": %d}", value);
 				printf("Publishing: %s\n", app_buffer);
-
-				value++;
 					
 				mqtt_publish(&conn, NULL, pub_topic, (uint8_t *)app_buffer,
 					strlen(app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
