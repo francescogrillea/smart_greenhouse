@@ -10,9 +10,18 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
 public class CoapRegistrationResource extends CoapResource {
-    public CoapRegistrationResource(String name) {
+
+    Connection mysql_connection;
+
+    public CoapRegistrationResource(String name, Connection connection) {
         super(name);
+        this.mysql_connection = connection;
         setObservable(true);
     }
 
@@ -22,31 +31,55 @@ public class CoapRegistrationResource extends CoapResource {
     public void handlePOST(CoapExchange exchange) {
 
         Response response = new Response(CoAP.ResponseCode.CONTENT);
-        System.out.println("Request is arriving");
+        String sql = "INSERT INTO SensorData (timestamp, temperature, IP_address) VALUES (?, ?, ?)";
+
+        double temperature = 0.0;
+        Timestamp timestamp;
+        String ip = null;
+
         if(exchange.getRequestOptions().getContentFormat() == MediaTypeRegistry.APPLICATION_JSON) {
             String payload = exchange.getRequestText();
             System.out.println(payload);
+            JSONObject requestJson = new JSONObject();
 
             try {
-                // TODO - settare per bene il nome dei campi
-                JSONObject requestJson = (JSONObject) JSONValue.parseWithException(payload);
-                long value = (long) requestJson.get("value");
-                System.out.println("Value: " + value);
-                value = value * value;
+                requestJson = (JSONObject) JSONValue.parseWithException(payload);
+                temperature = (double)((long) requestJson.get("temperature")) / 10;
+                timestamp = new Timestamp(System.currentTimeMillis());
+                ip = (String)requestJson.get("IP");
 
-                // response creation
-                requestJson.put("value", value);
-                response.setPayload(requestJson.toJSONString());
-                response.getOptions().setContentFormat(MediaTypeRegistry.APPLICATION_JSON);
-
-                System.out.println("Response sent");
             } catch (ParseException e) {
+                requestJson.put("value", 500);  // Server error!
                 throw new RuntimeException(e);
             }
 
-            // TODO - add to MySQL Database
+            try {
+                PreparedStatement statement = this.mysql_connection.prepareStatement(sql);
+                statement.setTimestamp(1, timestamp);
+                statement.setDouble(2, temperature);
+                statement.setString(3, ip);
 
-            exchange.respond(response);
+                int rowsInserted = statement.executeUpdate();
+                if (rowsInserted <= 0) {
+                    System.out.println("No new rows inserted!");
+                    response.setPayload("500");
+                }
+
+                statement.close();
+                // TODO - capire se va chiusa anche la connessione col DB e quando
+
+            } catch (SQLException e) {
+                response.setPayload("500");
+                throw new RuntimeException(e);
+            }
+            // response creation
+            response.setPayload("200");
+
         }
+        else{
+            response.setPayload("Response but not in JSON format!");
+        }
+        exchange.respond(response);
+        System.out.println("Response sent!");
     }
 }
