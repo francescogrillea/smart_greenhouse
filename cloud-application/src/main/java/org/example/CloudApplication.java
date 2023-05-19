@@ -28,6 +28,12 @@ public class CloudApplication{
         server.start();
 
         // TODO - add MQTT Subscriber
+        // MQTT subscriber launch
+        try {
+            MqttSubscriber myMQTTSubscriber = new MqttSubscriber();
+        } catch (MqttException me ){
+            me.printStackTrace();
+        }
 
     }
 }
