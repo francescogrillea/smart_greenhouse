@@ -2,6 +2,7 @@ package org.example;
 
 
 import org.eclipse.californium.core.CoapServer;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,10 +28,9 @@ public class CloudApplication{
         server.add(new CoapRegistrationResource("registration", connection));
         server.start();
 
-        // TODO - add MQTT Subscriber
         // MQTT subscriber launch
         try {
-            MqttSubscriber myMQTTSubscriber = new MqttSubscriber();
+            MqttSubscriber myMQTTSubscriber = new MqttSubscriber(connection);
         } catch (MqttException me ){
             me.printStackTrace();
         }
