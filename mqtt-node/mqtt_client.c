@@ -225,3 +225,7 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
   PROCESS_END();
 }
 
+
+
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add – echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add – echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list

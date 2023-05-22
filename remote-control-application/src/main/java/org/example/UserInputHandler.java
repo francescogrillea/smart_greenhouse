@@ -1,26 +1,26 @@
 package org.example;
 
-import javax.xml.crypto.Data;
 import java.util.Scanner;
 
-/**
- * Hello world!
- *
- */
+import static java.lang.System.exit;
+
 public class UserInputHandler
 {
     static DatabaseHandler databaseHandler;
     static int numMillis=10000;
+    static CoAPHandler coapHandler;
+
     public static void main( String[] args )
     {
         System.out.println("Welcome in the remote control application prompt.");
         System.out.println("[SYSTEM STARTING...]");
         databaseHandler = new DatabaseHandler();
-        RemoteControlApplicationThread remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler);
+        coapHandler = new CoAPHandler();
+        RemoteControlApplicationThread remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler);
         remoteControlApplicationThread.start();
         Scanner scanner = new Scanner(System.in);
         int input = 0;
-        System.out.println("[SYSTEM STARTED");
+        System.out.println("[SYSTEM STARTED]");
         while(input != 4) {
             System.out.println("[PROMPT]");
             System.out.println("- If you want to run the application by yourself enter 1");
@@ -41,13 +41,25 @@ public class UserInputHandler
                         input = scanner.nextInt();
                         switch (input){
                             case 1:
-                                // turn up tents
+                                coapHandler.sendMessage("tent", "up", databaseHandler.findActuatorsIPs());
+                                System.out.println("[TENTS UP]");
                                 break;
                             case 2:
-                                // turn down tents
+                                coapHandler.sendMessage("tent", "down", databaseHandler.findActuatorsIPs());
+                                System.out.println("[TENTS DOWN");
+                                break;
+                            case 3:
+                                break;
+                            default:
+                                System.out.println("Unknown command..");
                                 break;
                         }
                     } while (input != 3);
+                    // activate remote control application again
+                    System.out.println("[SYSTEM STARTING]");
+                    remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler);
+                    remoteControlApplicationThread.start();
+                    System.out.println("[SYSTEM STARTED]");
                     break;
                 case 2:
                     System.out.println("- Enter a new temperature threshold");
@@ -59,16 +71,13 @@ public class UserInputHandler
                     input=scanner.nextInt();
                     remoteControlApplicationThread.changeTiming(input);
                     break;
+                case 4:
+                    break;
+                default:
+                    System.out.println("Unknown command..");
             }
         }
         System.out.println("Good bye...");
+        exit(0);
     }
-    public void turnUpTents(){
-        // to implement
-    }
-
-    public void turnDownTents(){
-        // to implement
-    }
-
 }
