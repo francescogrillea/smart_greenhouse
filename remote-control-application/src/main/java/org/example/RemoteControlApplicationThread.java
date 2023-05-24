@@ -6,7 +6,7 @@ public class RemoteControlApplicationThread extends Thread{
     private boolean isRunning;
     private final Object lock = new Object();
     private int numMillis;
-    private int temperatureThreshold=24;
+    private int temperatureThreshold=28;
     private final DatabaseHandler databaseHandler;
     private final CoAPHandler coapHandler;
     private String tentState="up";
