@@ -26,10 +26,13 @@ static void res_put_handler(coap_message_t *request, coap_message_t *response, u
     /* Parse the payload to determine the LED state */
     if(strcmp(payload, "up") == 0) {
       /* Turn on the GREEN_LEDS */
+      leds_off(LEDS_RED);
+      leds_off(LEDS_YELLOW);
       leds_on(LEDS_GREEN);
     } else if(strcmp(payload, "down") == 0) {
-      /* Turn off the GREEN_LEDS */
+      leds_off(LEDS_RED);
       leds_off(LEDS_GREEN);
+      leds_on(LEDS_YELLOW);
     }
 
     /* Set the response code to indicate success */

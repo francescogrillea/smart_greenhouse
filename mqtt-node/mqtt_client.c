@@ -12,6 +12,7 @@
 #include "mqtt-client.h" // .h all'interno della stessa directory del .c
 #include <string.h>
 #include <strings.h>
+#include "os/dev/leds.h"
 /*---------------------------------------------------------------------------*/
 
 #define LOG_MODULE "mqtt-client"
@@ -94,16 +95,21 @@ static bool have_connectivity(void) {
 }
 
 static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data){
+
+	printf("Event occurs\n");
 	switch(event) {
 		case MQTT_EVENT_CONNECTED: {
 			printf("Application has a MQTT connection\n");
-			
+			leds_off(LEDS_RED);
+			leds_on(LEDS_YELLOW);
 			state = STATE_CONNECTED;
 			break;
 		}
 		case MQTT_EVENT_DISCONNECTED: {
 			printf("MQTT Disconnect. Reason %u\n", *((mqtt_event_t *)data));
-			
+			leds_on(LEDS_RED);
+			leds_off(LEDS_YELLOW);
+			leds_off(LEDS_GREEN);
 			state = STATE_DISCONNECTED;
 			process_poll(&mqtt_client_example);
 			break;
@@ -122,6 +128,10 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
 	}
 }
 
+void* thread_led(){
+	
+}
+
 
 static button_hal_button_t *btn;   //Pointer to the button
 static int variation = 0;
@@ -130,6 +140,7 @@ static int variation = 0;
 PROCESS_THREAD(mqtt_client_example, ev, data){
 
 	PROCESS_BEGIN();
+	leds_on(LEDS_RED);
 
 	printf("MQTT Client Process\n");
 
@@ -198,8 +209,8 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
 				sprintf(app_buffer, "{\"temperature\": %d,\n\"ip\": \"%s\"}", value, ip_addr_str);
 				printf("Publishing: %s\n", app_buffer);
 					
-				mqtt_publish(&conn, NULL, pub_topic, (uint8_t *)app_buffer,
-					strlen(app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
+				leds_toggle(LEDS_GREEN);
+				mqtt_publish(&conn, NULL, pub_topic, (uint8_t *)app_buffer, strlen(app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
 			
 			} else if ( state == STATE_DISCONNECTED ){
 				LOG_ERR("Disconnected form MQTT broker. Trying to reconnect..\n");	
