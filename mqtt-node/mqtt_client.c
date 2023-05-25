@@ -128,11 +128,6 @@ static void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data
 	}
 }
 
-void* thread_led(){
-	
-}
-
-
 static button_hal_button_t *btn;   //Pointer to the button
 static int variation = 0;
 

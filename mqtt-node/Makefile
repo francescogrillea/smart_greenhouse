@@ -10,6 +10,5 @@ include $(CONTIKI)/Makefile.identify-target
 
 MODULES_REL += arch/platform/$(TARGET)
 
-PLATFORMS_ONLY = cc26x0-cc13x0 cc2538dk openmote zoul native simplelink cooja
 
 include $(CONTIKI)/Makefile.include
