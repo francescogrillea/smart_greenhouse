@@ -14,7 +14,7 @@ public class UserInputHandler
     {
         System.out.println("Welcome in the remote control application prompt.");
         System.out.println("[SYSTEM STARTING...]");
-        databaseHandler = new DatabaseHandler();
+        databaseHandler = new DatabaseHandler("config.properties");
         coapHandler = new CoAPHandler();
         RemoteControlApplicationThread remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler);
         remoteControlApplicationThread.start();
