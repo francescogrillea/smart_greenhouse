@@ -19,14 +19,10 @@
 
 ////////////////////////////////////////////////
 
+#define LOG_LEVEL_APP LOG_LEVEL_DBG
 
-#undef QUEUEBUF_CONF_NUM
-#define QUEUEBUF_CONF_NUM	32
+/* Enable client-side support for COAP observe */
+#define COAP_OBSERVE_CLIENT            1
 
-#undef IEEE802154_CONF_PANID
-#define IEEE801254_CONF_PANID 0x0011
+#endif /* PROJECT_CONF_H_ */
 
-#undef IEEE802154_CONF_DEFAULT_CHANNEL
-#define IEEE802154_CONF_DEFAULT_CHANNEL 15
-
-#endif
