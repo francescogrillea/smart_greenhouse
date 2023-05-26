@@ -9,17 +9,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHandler {
-    private final String ip = "localhost";
-    private final String port = "3306";
-    private final String name = "smart_greenhouse";
-    private final String user = "root";
-    private final String pass = "123";
+    private String db_IP;
+    private String port;
+    private String db_name;
+    private String user;
+    private String password;
+
+    public DatabaseHandler(String config_path) {
+        Properties config = new Properties();
+        try (FileInputStream input = new FileInputStream(config_path)) {
+            config.load(input);
+        } catch (IOException e) {
+            System.err.println("Failed to load configuration file!");
+            e.printStackTrace();
+        }
+
+        this.db_IP = config.getProperty("db.IP");
+        this.db_name = config.getProperty("db.name");
+        this.port = config.getProperty("db.port");
+        this.user = config.getProperty("db.username");
+        this.password = config.getProperty("db.password");
+    }
+
 
     public List<String> findActuatorsIPs (){
         List<String> ips = new ArrayList<>();
-        String url = "jdbc:mysql://"+ip+":"+port+"/"+name;
+        String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
         String sql = "SELECT ip FROM actuators";
-        try (Connection co = DriverManager.getConnection(url, user, pass);
+        try (Connection co = DriverManager.getConnection(url, user, password);
         PreparedStatement pr = co.prepareStatement(sql)){
             ResultSet r = pr.executeQuery();
             while(r.next()){
@@ -33,9 +50,9 @@ public class DatabaseHandler {
 
     public List<Double> findLastTemperatures(int numRows){
         List<Double> temps = new ArrayList<>();
-        String url = "jdbc:mysql://"+ip+":"+port+"/"+name;
+        String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
         String sql = "SELECT temperature FROM SensorData ORDER BY timestamp DESC LIMIT "+numRows;
-        try (Connection co = DriverManager.getConnection(url, user, pass);
+        try (Connection co = DriverManager.getConnection(url, user, password);
              PreparedStatement pr = co.prepareStatement(sql)){
             ResultSet r = pr.executeQuery();
             while(r.next()){

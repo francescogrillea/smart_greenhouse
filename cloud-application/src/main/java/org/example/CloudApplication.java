@@ -12,7 +12,7 @@ public class CloudApplication{
     public static void main( String[] args ){
 
         // MySQL Connection
-        DatabaseHandler databaseHandler = new DatabaseHandler();
+        DatabaseHandler databaseHandler = new DatabaseHandler("config.properties");
 
 
         // CoAP Server that stores actuators info in a MySQL DB
