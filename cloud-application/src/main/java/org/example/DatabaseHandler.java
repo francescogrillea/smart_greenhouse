@@ -29,14 +29,15 @@ public class DatabaseHandler {
         this.user = config.getProperty("db.username");
         this.password = config.getProperty("db.password");
     }
-
-    public boolean addActuatorIP(String ip){
+    public boolean addActuator(String ip, int greenhouseId, String role){
         System.out.println("[ACTUATOR IS BEING REGISTERED]");
-        String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
-        String sql = "INSERT INTO actuators(ip) values (?)";
-        try (Connection co = DriverManager.getConnection(url, user, password);
+        String url = "jdbc:mysql://"+ip_db+":"+port+"/"+name;
+        String sql = "INSERT INTO actuators(ip, greenhouseid, role) values (?,?,?)";
+        try (Connection co = DriverManager.getConnection(url, user, pass);
              PreparedStatement pr = co.prepareStatement(sql)){
             pr.setString(1, ip);
+            pr.setInt(2,greenhouseId);
+            pr.setString(3,role);
             int rowsInserted = pr.executeUpdate();
             if(rowsInserted <=0){
                 System.out.println("[ACTUATORS]: No rows inserted.");
@@ -50,13 +51,14 @@ public class DatabaseHandler {
         return true;
     }
 
-    public boolean addTemperature(double temp, String ip){
-        String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
-        String sql = "INSERT INTO SensorData(ip, temperature) values (?,?)";
-        try (Connection co = DriverManager.getConnection(url, user, password);
+    public boolean addTemperature(double temp, String ip, int greenhouseId){
+        String url = "jdbc:mysql://"+ip_db+":"+port+"/"+name;
+        String sql = "INSERT INTO SensorData(ip,greenhouseid, temperature) values (?,?,?)";
+        try (Connection co = DriverManager.getConnection(url, user, pass);
              PreparedStatement pr = co.prepareStatement(sql)){
             pr.setString(1, ip);
-            pr.setDouble(2, temp);
+            pr.setInt(2,greenhouseId);
+            pr.setDouble(3, temp);
             int rowsInserted = pr.executeUpdate();
             if(rowsInserted <=0){
                 System.out.println("[SENSORDATA]: No rows inserted.");
@@ -69,4 +71,5 @@ public class DatabaseHandler {
         System.out.println("[RELEVATION INSERTED]: "+ip+" "+temp);
         return true;
     }
+    
 }
