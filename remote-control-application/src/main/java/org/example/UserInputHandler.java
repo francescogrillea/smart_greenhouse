@@ -9,6 +9,7 @@ public class UserInputHandler
     static DatabaseHandler databaseHandler;
     static int numMillis=10000;
     static CoAPHandler coapHandler;
+    static final int greenhouseId=1;
 
     public static void main( String[] args )
     {
@@ -16,7 +17,7 @@ public class UserInputHandler
         System.out.println("[SYSTEM STARTING...]");
         databaseHandler = new DatabaseHandler("config.properties");
         coapHandler = new CoAPHandler();
-        RemoteControlApplicationThread remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler);
+        RemoteControlApplicationThread remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler, greenhouseId);
         remoteControlApplicationThread.start();
         Scanner scanner = new Scanner(System.in);
         int input = 0;
@@ -41,11 +42,11 @@ public class UserInputHandler
                         input = scanner.nextInt();
                         switch (input){
                             case 1:
-                                coapHandler.sendMessage("tent", "up", databaseHandler.findActuatorsIPs());
+                                coapHandler.sendMessage("tent", "up", databaseHandler.findTentsIPs(greenhouseId));
                                 System.out.println("[TENTS UP]");
                                 break;
                             case 2:
-                                coapHandler.sendMessage("tent", "down", databaseHandler.findActuatorsIPs());
+                                coapHandler.sendMessage("tent", "down", databaseHandler.findTentsIPs(greenhouseId));
                                 System.out.println("[TENTS DOWN");
                                 break;
                             case 3:
@@ -57,7 +58,7 @@ public class UserInputHandler
                     } while (input != 3);
                     // activate remote control application again
                     System.out.println("[SYSTEM STARTING]");
-                    remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler);
+                    remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler, greenhouseId);
                     remoteControlApplicationThread.start();
                     System.out.println("[SYSTEM STARTED]");
                     break;
