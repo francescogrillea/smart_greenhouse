@@ -201,7 +201,7 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
         		}
 
 				// be careful, message too big will crash Cooja env
-				sprintf(app_buffer, "{\"temperature\": %d,\n\"ip\": \"%s\"}", value, ip_addr_str);
+				sprintf(app_buffer, "{\"app\":\"smart_greenhouse\",\n\"greenhouse_id\":1,\n\"temperature\": %d,\n\"ip\": \"%s\"}", value, ip_addr_str);
 				printf("Publishing: %s\n", app_buffer);
 					
 				leds_toggle(LEDS_GREEN);
