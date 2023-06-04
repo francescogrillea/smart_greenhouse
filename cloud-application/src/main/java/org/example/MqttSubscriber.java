@@ -40,12 +40,16 @@ public class MqttSubscriber implements MqttCallback {
         try {
             // message unpacking
             JSONObject requestJson = (JSONObject) JSONValue.parseWithException(new String(mqttMessage.getPayload()));
-            int temp = Integer.parseInt(requestJson.get("temperature").toString());
-            String ip = requestJson.get("ip").toString();
+            String app = requestJson.get("app").toString();
+            if(app.equals("smart_greenhouse")) {
+                int greenhouseId = Integer.parseInt(requestJson.get("greenhouse_id").toString());
+                int temp = Integer.parseInt(requestJson.get("temperature").toString());
+                String ip = requestJson.get("ip").toString();
 
-            double temp_double = (double) temp / 10;
-            // adding to the database
-            databaseHandler.addTemperature(temp_double, ip);
+                double temp_double = (double) temp / 10;
+                // adding to the database
+                databaseHandler.addTemperature(temp_double, ip, greenhouseId);
+            }
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

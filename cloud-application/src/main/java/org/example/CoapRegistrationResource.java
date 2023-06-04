@@ -35,11 +35,16 @@ public class CoapRegistrationResource extends CoapResource {
             try {
                 // request unpacking
                 JSONObject requestJson = (JSONObject) JSONValue.parseWithException(payload);
-                String value = (String) requestJson.get("ip");
-                // adding ip to the database
-                databaseHandler.addActuatorIP(value);
-                // response creation
-                response.setPayload("200");
+                String appName = (String) requestJson.get("app");
+                System.out.println(appName);
+                String role = (String) requestJson.get("role");
+                System.out.println(role);
+                int greenhouseId= Integer.parseInt(requestJson.get("greenhouse_id").toString());
+                System.out.println(greenhouseId);
+                if(appName.equals("smart_greenhouse")) {
+                    databaseHandler.addActuator(exchange.getSourceAddress().toString().substring(1), greenhouseId, role);
+                    response.setPayload("200");
+                }
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
