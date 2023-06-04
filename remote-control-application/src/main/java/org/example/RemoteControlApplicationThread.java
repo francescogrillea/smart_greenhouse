@@ -10,18 +10,20 @@ public class RemoteControlApplicationThread extends Thread{
     private final DatabaseHandler databaseHandler;
     private final CoAPHandler coapHandler;
     private String tentState="up";
+    private final int greenhouseId;
 
-    public RemoteControlApplicationThread(int numMillis, DatabaseHandler databaseHandler, CoAPHandler coapHandler) {
+    public RemoteControlApplicationThread(int numMillis, DatabaseHandler databaseHandler, CoAPHandler coapHandler, int greenhouseId) {
         this.numMillis = numMillis;
         isRunning=true;
         this.databaseHandler= databaseHandler;
         this.coapHandler = coapHandler;
+        this.greenhouseId=greenhouseId;
     }
 
     public void run(){
         while(isRunning){
             // compute the average temperature for the last 5 secs by accessing to the DB
-            List<Double> lastTemps = databaseHandler.findLastTemperatures(10);
+            List<Double> lastTemps = databaseHandler.findLastTemperatures(10, greenhouseId);
             double averageTemp= 0;
             for(Double f: lastTemps){
                 averageTemp+=f;
@@ -31,12 +33,12 @@ public class RemoteControlApplicationThread extends Thread{
             // send COAP message to actuators
             synchronized((Integer)temperatureThreshold) {
                 if (averageTemp > temperatureThreshold && tentState.equals("down")) {
-                    coapHandler.sendMessage("tent", "up", databaseHandler.findActuatorsIPs());
+                    coapHandler.sendMessage("tent", "up", databaseHandler.findTentsIPs(greenhouseId));
                     tentState = "up";
                     System.out.println("[TENTS UP]");
                 }
                 if (averageTemp < temperatureThreshold && tentState.equals("up")) {
-                    coapHandler.sendMessage("tent", "down", databaseHandler.findActuatorsIPs());
+                    coapHandler.sendMessage("tent", "down", databaseHandler.findTentsIPs(greenhouseId));
                     System.out.println("[TENTS DOWN]");
                     tentState = "down";
                 }
