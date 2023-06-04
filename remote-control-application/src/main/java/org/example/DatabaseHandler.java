@@ -32,12 +32,13 @@ public class DatabaseHandler {
     }
 
 
-    public List<String> findActuatorsIPs (){
+    public List<String> findTentsIPs (int greenhouseId){
         List<String> ips = new ArrayList<>();
-        String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
-        String sql = "SELECT ip FROM actuators";
-        try (Connection co = DriverManager.getConnection(url, user, password);
+        String url = "jdbc:mysql://"+ip+":"+port+"/"+name;
+        String sql = "SELECT ip FROM actuators WHERE greenhouseid=? AND role=\"tent\"";
+        try (Connection co = DriverManager.getConnection(url, user, pass);
         PreparedStatement pr = co.prepareStatement(sql)){
+            pr.setInt(1,greenhouseId);
             ResultSet r = pr.executeQuery();
             while(r.next()){
                 ips.add(r.getString(1));
@@ -48,12 +49,13 @@ public class DatabaseHandler {
         return ips;
     }
 
-    public List<Double> findLastTemperatures(int numRows){
+    public List<Double> findLastTemperatures(int numRows, int greenhouseId){
         List<Double> temps = new ArrayList<>();
-        String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
-        String sql = "SELECT temperature FROM SensorData ORDER BY timestamp DESC LIMIT "+numRows;
-        try (Connection co = DriverManager.getConnection(url, user, password);
+        String url = "jdbc:mysql://"+ip+":"+port+"/"+name;
+        String sql = "SELECT temperature FROM SensorData WHERE greenhouseid=? ORDER BY timestamp DESC LIMIT "+numRows;
+        try (Connection co = DriverManager.getConnection(url, user, pass);
              PreparedStatement pr = co.prepareStatement(sql)){
+            pr.setInt(1,greenhouseId);
             ResultSet r = pr.executeQuery();
             while(r.next()){
                 temps.add( r.getDouble(1));
