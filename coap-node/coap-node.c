@@ -15,8 +15,6 @@
 #define SERVER_EP "coap://[fd00::1]"
 #define TOGGLE_INTERVAL 10
 char *service_url = "/registration";
-#define SIZE_ADDR 50
-#define SIZE_JSON 200
 
 // flag to exit the while cycle and start the server tasks
 static bool registered = false;
@@ -26,11 +24,7 @@ extern coap_resource_t res_tent;
 static struct etimer et;
 static coap_endpoint_t server_ep;
 static coap_message_t request[1]; /* This way the packet can be treated as pointer as usual. */
-
-// utility
-static uint8_t state;
-static char ip_addr_str[SIZE_ADDR];
-static char json_message[SIZE_JSON];
+static char json_message[] = "{\"app\":\"smart_greenhouse\",\n\"role\":\"tent\",\n\"greenhouse_id\":1}";
 
 // Define a handler to handle the response from the server
 void client_chunk_handler(coap_message_t *response){
@@ -52,22 +46,6 @@ PROCESS_THREAD(client, ev, data){
     ///////////////// COAP CLIENT //////////////
 
     leds_on(LEDS_RED);
-    
-    // obtain the ip address of the node
-    while(1){
-        printf("while\n");
-        etimer_set(&et, CLOCK_SECOND*5);
-        PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-        state = uip_ds6_if.addr_list[1].state;
-        if(uip_ds6_if.addr_list[1].isused && (state==ADDR_TENTATIVE || state == ADDR_PREFERRED)){
-            uiplib_ipaddr_snprint(ip_addr_str, SIZE_ADDR, &uip_ds6_if.addr_list[1].ipaddr);
-            sprintf(json_message, "{\"ip\":\"%s\"}", ip_addr_str);
-                if((int)strlen(ip_addr_str)!=0){
-                break;
-            }
-        }
-    }
-    printf("ip: %s\n",ip_addr_str);
     
     // Populate the coap_endpoint_t data structure
     coap_endpoint_parse(SERVER_EP, strlen(SERVER_EP),&server_ep);
