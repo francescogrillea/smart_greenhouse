@@ -11,8 +11,7 @@ CREATE TABLE SensorData (
 
 
 CREATE TABLE Actuators (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    IP_Actuator VARCHAR(255),
+    IP_Actuator VARCHAR(255) PRIMARY KEY,
     ID_Greenhouse INT,
     Role VARCHAR(255)
 );
