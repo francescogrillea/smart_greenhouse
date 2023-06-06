@@ -1,5 +1,7 @@
 package org.example;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class DatabaseHandler {
     private String db_IP;
@@ -34,9 +37,9 @@ public class DatabaseHandler {
 
     public List<String> findTentsIPs (int greenhouseId){
         List<String> ips = new ArrayList<>();
-        String url = "jdbc:mysql://"+ip+":"+port+"/"+name;
-        String sql = "SELECT ip FROM actuators WHERE greenhouseid=? AND role=\"tent\"";
-        try (Connection co = DriverManager.getConnection(url, user, pass);
+        String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
+        String sql = "SELECT IP_Actuator FROM Actuators WHERE ID_Greenhouse=? AND Role=\"tent\"";
+        try (Connection co = DriverManager.getConnection(url, user, password);
         PreparedStatement pr = co.prepareStatement(sql)){
             pr.setInt(1,greenhouseId);
             ResultSet r = pr.executeQuery();
@@ -51,9 +54,9 @@ public class DatabaseHandler {
 
     public List<Double> findLastTemperatures(int numRows, int greenhouseId){
         List<Double> temps = new ArrayList<>();
-        String url = "jdbc:mysql://"+ip+":"+port+"/"+name;
-        String sql = "SELECT temperature FROM SensorData WHERE greenhouseid=? ORDER BY timestamp DESC LIMIT "+numRows;
-        try (Connection co = DriverManager.getConnection(url, user, pass);
+        String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
+        String sql = "SELECT Temperature FROM SensorData WHERE ID_Greenhouse=? ORDER BY Timestamp DESC LIMIT "+numRows;
+        try (Connection co = DriverManager.getConnection(url, user, password);
              PreparedStatement pr = co.prepareStatement(sql)){
             pr.setInt(1,greenhouseId);
             ResultSet r = pr.executeQuery();

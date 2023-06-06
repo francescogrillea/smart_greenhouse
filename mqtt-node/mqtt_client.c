@@ -31,7 +31,7 @@ static const char *broker_ip = MQTT_CLIENT_BROKER_IP_ADDR;
 
 // Defaukt config values
 #define DEFAULT_BROKER_PORT         1883
-#define DEFAULT_PUBLISH_INTERVAL    (30 * CLOCK_SECOND)
+//#define DEFAULT_PUBLISH_INTERVAL    (30 * CLOCK_SECOND)
 
 
 // We assume that the broker does not require authentication
@@ -68,9 +68,9 @@ static char pub_topic[BUFFER_SIZE];
 static int value = 0;
 
 // Periodic timer to check the state of the MQTT client
-#define STATE_MACHINE_PERIODIC     (CLOCK_SECOND >> 1)	// TODO - a che serve?
+//#define STATE_MACHINE_PERIODIC     (CLOCK_SECOND >> 1)
 
-#define PUBLISHING_INTERVAL (2 * CLOCK_SECOND)
+#define PUBLISHING_INTERVAL (5 * CLOCK_SECOND)
 static struct etimer periodic_timer;
 
 // The main MQTT buffers. We will need to increase if we start publishing more data.
