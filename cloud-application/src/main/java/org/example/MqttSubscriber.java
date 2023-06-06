@@ -45,12 +45,12 @@ public class MqttSubscriber implements MqttCallback {
                 int greenhouseId = Integer.parseInt(requestJson.get("greenhouse_id").toString());
                 int temp = Integer.parseInt(requestJson.get("temperature").toString());
                 String ip = requestJson.get("ip").toString();
-
                 double temp_double = (double) temp / 10;
                 // adding to the database
                 databaseHandler.addTemperature(temp_double, ip, greenhouseId);
             }
         } catch (ParseException e) {
+            System.out.println("[RELEVATION NOT RECEIVED CORRECTLY]");
             throw new RuntimeException(e);
         }
     }

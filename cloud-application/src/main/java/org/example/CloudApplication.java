@@ -3,7 +3,6 @@ package org.example;
 
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.paho.client.mqttv3.MqttException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
