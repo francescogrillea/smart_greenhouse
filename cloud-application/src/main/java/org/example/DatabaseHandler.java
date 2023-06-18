@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * The DatabaseHandler class handles database operations for actuator and sensor data.
+ */
 public class DatabaseHandler {
     private String db_IP;
     private String port;
@@ -14,6 +17,11 @@ public class DatabaseHandler {
     private String user;
     private String password;
 
+    /**
+     * Constructs a new DatabaseHandler object by loading the database configuration from a file.
+     *
+     * @param config_path  the path to the configuration file
+     */
     public DatabaseHandler(String config_path) {
         Properties config = new Properties();
         try (FileInputStream input = new FileInputStream(config_path)) {
@@ -29,6 +37,15 @@ public class DatabaseHandler {
         this.user = config.getProperty("db.username");
         this.password = config.getProperty("db.password");
     }
+
+    /**
+     * Adds an actuator to the database.
+     *
+     * @param ip            the IP address of the actuator
+     * @param greenhouseId  the ID of the associated greenhouse
+     * @param role          the role of the actuator
+     * @return true if the actuator is successfully added, false otherwise
+     */
     public boolean addActuator(String ip, int greenhouseId, String role){
         String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
         String sql = "INSERT INTO Actuators(IP_Actuator, ID_Greenhouse, Role) values (?,?,?)";
@@ -54,6 +71,14 @@ public class DatabaseHandler {
         return true;
     }
 
+    /**
+     * Adds a temperature reading to the database.
+     *
+     * @param temp          the temperature value
+     * @param ip            the IP address of the sensor
+     * @param greenhouseId  the ID of the associated greenhouse
+     * @return true if the temperature reading is successfully added, false otherwise
+     */
     public boolean addTemperature(double temp, String ip, int greenhouseId){
         String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
         String sql = "INSERT INTO SensorData(IP_Sensor, ID_Greenhouse, Temperature) values (?,?,?)";

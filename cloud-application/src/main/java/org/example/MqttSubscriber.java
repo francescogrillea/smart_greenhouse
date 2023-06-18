@@ -13,11 +13,20 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Arrays;
 
+/**
+ * The MqttSubscriber class implements an MQTT subscriber that listens to a specific topic for temperature messages.
+ */
 public class MqttSubscriber implements MqttCallback {
     private final String topic ="temperature";
     private final String broker = "tcp://127.0.0.1:1883";
     private final String clientId = "SmartGreenhouse";
     private DatabaseHandler databaseHandler;
+
+    /**
+     * Constructs a new MqttSubscriber object with the specified DatabaseHandler.
+     *
+     * @param databaseHandler  the DatabaseHandler used to store temperature data
+     */
     public MqttSubscriber(DatabaseHandler databaseHandler){
         this.databaseHandler = databaseHandler;
         try {
@@ -29,6 +38,7 @@ public class MqttSubscriber implements MqttCallback {
             me.printStackTrace();
         }
     }
+
 
     @Override
     public void connectionLost(Throwable throwable) {

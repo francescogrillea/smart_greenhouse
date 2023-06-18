@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+
+/**
+ * The DatabaseHandler class provides methods to interact with a database and retrieve information.
+ */
 public class DatabaseHandler {
     private String db_IP;
     private String port;
@@ -18,6 +22,11 @@ public class DatabaseHandler {
     private String user;
     private String password;
 
+    /**
+     * Constructs a new DatabaseHandler object.
+     *
+     * @param config_path the path to the configuration file
+     */
     public DatabaseHandler(String config_path) {
         Properties config = new Properties();
         try (FileInputStream input = new FileInputStream(config_path)) {
@@ -35,6 +44,12 @@ public class DatabaseHandler {
     }
 
 
+    /**
+     * Retrieves the IP addresses of tents associated with a specific greenhouse from the database.
+     *
+     * @param greenhouseId the ID of the greenhouse
+     * @return a list of IP addresses of tents
+     */
     public List<String> findTentsIPs (int greenhouseId){
         List<String> ips = new ArrayList<>();
         String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
@@ -52,6 +67,13 @@ public class DatabaseHandler {
         return ips;
     }
 
+    /**
+     * Retrieves the last temperatures recorded in the database for a specific greenhouse.
+     *
+     * @param numRows      the number of temperature readings to retrieve
+     * @param greenhouseId the ID of the greenhouse
+     * @return a list of the last temperatures
+     */
     public List<Double> findLastTemperatures(int numRows, int greenhouseId){
         List<Double> temps = new ArrayList<>();
         String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;

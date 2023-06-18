@@ -2,6 +2,10 @@ package org.example;
 
 import java.util.List;
 
+/**
+ * The RemoteControlApplicationThread class represents a thread that monitors temperature conditions
+ * and controls the state of tents in a greenhouse based on temperature thresholds.
+ */
 public class RemoteControlApplicationThread extends Thread{
     private boolean isRunning;
     private final Object lock = new Object();
@@ -12,6 +16,15 @@ public class RemoteControlApplicationThread extends Thread{
     private String tentState="up";
     private final int greenhouseId;
 
+
+    /**
+     * Constructs a new RemoteControlApplicationThread object.
+     *
+     * @param numMillis         the duration of the sleep interval in milliseconds
+     * @param databaseHandler   the instance of DatabaseHandler to interact with the database
+     * @param coapHandler       the instance of CoAPHandler to send CoAP messages to actuators
+     * @param greenhouseId      the ID of the greenhouse to monitor and control
+     */
     public RemoteControlApplicationThread(int numMillis, DatabaseHandler databaseHandler, CoAPHandler coapHandler, int greenhouseId) {
         this.numMillis = numMillis;
         isRunning=true;
@@ -20,6 +33,9 @@ public class RemoteControlApplicationThread extends Thread{
         this.greenhouseId=greenhouseId;
     }
 
+    /**
+     * The main execution logic of the thread.
+     */
     public void run(){
         while(isRunning){
             // compute the average temperature for the last 5 secs by accessing to the DB
@@ -53,18 +69,33 @@ public class RemoteControlApplicationThread extends Thread{
             }
         }
     }
+
+
+    /**
+     * Stops the monitoring and control process.
+     */
     public void stopCheckingDB(){
         isRunning=false;
         synchronized(lock){
             lock.notify();
         }
     }
-    public void changeTemperatureThreshold(int tt){
+
+    /**
+     * Changes the temperature threshold value.
+     *
+     * @param tt the new temperature threshold
+     */    public void changeTemperatureThreshold(int tt){
         synchronized ((Integer)temperatureThreshold){
             temperatureThreshold = tt;
         }
     }
 
+    /**
+     * Changes the sleep interval duration.
+     *
+     * @param numMillis the new sleep interval duration in milliseconds
+     */
     public void changeTiming(int numMillis){
         synchronized ((Integer)numMillis) {
             this.numMillis = numMillis;
