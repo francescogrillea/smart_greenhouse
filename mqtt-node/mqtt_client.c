@@ -190,7 +190,7 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
 				sprintf(pub_topic, "%s", "temperature");
 				
 				// sense the temperature
-				value = (TEMPERATURE_THRESHOLD + variation) + random_rand() % (TEMPERATURE_THRESHOLD_OFFSET - TEMPERATURE_THRESHOLD_STDEV);   
+				value = (TEMPERATURE_THRESHOLD + variation) + random_rand() % TEMPERATURE_THRESHOLD_OFFSET - TEMPERATURE_THRESHOLD_STDEV;   
 				
 				// retrieve the ip of the node
 				size_t size_addr = 30;
