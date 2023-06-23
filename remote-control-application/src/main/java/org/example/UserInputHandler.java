@@ -7,9 +7,10 @@ import static java.lang.System.exit;
 public class UserInputHandler
 {
     static DatabaseHandler databaseHandler;
-    static int numMillis=10000;
+        static int numMillis=10000;
     static CoAPHandler coapHandler;
     static final int greenhouseId=1;
+    static String tentState="up";
 
     public static void main( String[] args )
     {
@@ -17,7 +18,7 @@ public class UserInputHandler
         System.out.println("[SYSTEM STARTING...]");
         databaseHandler = new DatabaseHandler("config.properties");
         coapHandler = new CoAPHandler();
-        RemoteControlApplicationThread remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler, greenhouseId);
+        RemoteControlApplicationThread remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler, greenhouseId,tentState);
         remoteControlApplicationThread.start();
         Scanner scanner = new Scanner(System.in);
         int input = 0;
@@ -33,9 +34,10 @@ public class UserInputHandler
             switch (input) {
                 case 1:
                     System.out.println("[TURNING OFF THE REMOTE CONTROL APPLICATION]");
+                    tentState= remoteControlApplicationThread.getTentState();
                     remoteControlApplicationThread.stopCheckingDB();
                     do {
-                        System.out.println("[REMOTE CONTROL APPLICATION SHUT DOWN");
+                        System.out.println("[REMOTE CONTROL APPLICATION SHUT DOWN]");
                         System.out.println("- If you want to turn up tents press 1");
                         System.out.println("- If you want to turn down tents press 2");
                         System.out.println("- If you want to activate again the remote control application press 3");
@@ -44,10 +46,12 @@ public class UserInputHandler
                             case 1:
                                 coapHandler.sendMessage("tent", "up", databaseHandler.findTentsIPs(greenhouseId));
                                 System.out.println("[TENTS UP]");
+                                tentState="up";
                                 break;
                             case 2:
                                 coapHandler.sendMessage("tent", "down", databaseHandler.findTentsIPs(greenhouseId));
-                                System.out.println("[TENTS DOWN");
+                                System.out.println("[TENTS DOWN]");
+                                tentState="down";
                                 break;
                             case 3:
                                 break;
@@ -58,7 +62,7 @@ public class UserInputHandler
                     } while (input != 3);
                     // activate remote control application again
                     System.out.println("[SYSTEM STARTING]");
-                    remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler, greenhouseId);
+                    remoteControlApplicationThread = new RemoteControlApplicationThread(numMillis, databaseHandler, coapHandler, greenhouseId,tentState);
                     remoteControlApplicationThread.start();
                     System.out.println("[SYSTEM STARTED]");
                     break;

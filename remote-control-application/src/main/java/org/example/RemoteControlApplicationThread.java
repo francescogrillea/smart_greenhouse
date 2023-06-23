@@ -13,7 +13,7 @@ public class RemoteControlApplicationThread extends Thread{
     private int temperatureThreshold=28;
     private final DatabaseHandler databaseHandler;
     private final CoAPHandler coapHandler;
-    private String tentState="up";
+    private String tentState;
     private final int greenhouseId;
 
 
@@ -25,12 +25,13 @@ public class RemoteControlApplicationThread extends Thread{
      * @param coapHandler       the instance of CoAPHandler to send CoAP messages to actuators
      * @param greenhouseId      the ID of the greenhouse to monitor and control
      */
-    public RemoteControlApplicationThread(int numMillis, DatabaseHandler databaseHandler, CoAPHandler coapHandler, int greenhouseId) {
+    public RemoteControlApplicationThread(int numMillis, DatabaseHandler databaseHandler, CoAPHandler coapHandler, int greenhouseId, String tentState) {
         this.numMillis = numMillis;
         isRunning=true;
         this.databaseHandler= databaseHandler;
         this.coapHandler = coapHandler;
         this.greenhouseId=greenhouseId;
+        this.tentState=tentState;
     }
 
     /**
@@ -38,7 +39,9 @@ public class RemoteControlApplicationThread extends Thread{
      */
     public void run(){
         while(isRunning){
-            // compute the average temperature for the last 5 secs by accessing to the DB
+            // compute the average temperature for the last 10 rows by accessing to the DB
+            // we check the last 10 rows of the database to be sure
+            // new records are 4: 2 new data each 5 seconds. We check a sliding overlapping window of size 10
             List<Double> lastTemps = databaseHandler.findLastTemperatures(10, greenhouseId);
             double averageTemp= 0;
             for(Double f: lastTemps){
@@ -100,5 +103,9 @@ public class RemoteControlApplicationThread extends Thread{
         synchronized ((Integer)numMillis) {
             this.numMillis = numMillis;
         }
+    }
+
+    public String getTentState() {
+        return tentState;
     }
 }
