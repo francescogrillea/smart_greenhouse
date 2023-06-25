@@ -14,7 +14,7 @@
 // Server IP and resource path
 #define SERVER_EP "coap://[fd00::1]"
 #define TOGGLE_INTERVAL 10
-char *service_url = "/registration";
+char *service_url = "greenhouse/registration";
 
 // flag to exit the while cycle and start the server tasks
 static bool registered = false;
