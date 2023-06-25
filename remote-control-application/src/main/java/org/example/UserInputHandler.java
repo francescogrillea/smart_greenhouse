@@ -44,12 +44,12 @@ public class UserInputHandler
                         input = scanner.nextInt();
                         switch (input){
                             case 1:
-                                coapHandler.sendMessage("tent", "up", databaseHandler.findTentsIPs(greenhouseId));
+                                coapHandler.sendMessage("greenhouse/tent", "up", databaseHandler.findTentsIPs(greenhouseId));
                                 System.out.println("[TENTS UP]");
                                 tentState="up";
                                 break;
                             case 2:
-                                coapHandler.sendMessage("tent", "down", databaseHandler.findTentsIPs(greenhouseId));
+                                coapHandler.sendMessage("greenhouse/tent", "down", databaseHandler.findTentsIPs(greenhouseId));
                                 System.out.println("[TENTS DOWN]");
                                 tentState="down";
                                 break;
