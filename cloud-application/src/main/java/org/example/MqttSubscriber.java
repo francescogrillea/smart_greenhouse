@@ -17,7 +17,7 @@ import java.util.Arrays;
  * The MqttSubscriber class implements an MQTT subscriber that listens to a specific topic for temperature messages.
  */
 public class MqttSubscriber implements MqttCallback {
-    private final String topic ="temperature";
+    private final String topic ="greenhouse";
     private final String broker = "tcp://127.0.0.1:1883";
     private final String clientId = "SmartGreenhouse";
     private DatabaseHandler databaseHandler;
