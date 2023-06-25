@@ -187,7 +187,7 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
 					
 			if(state == STATE_CONNECTED){
 				// Publish something
-				sprintf(pub_topic, "%s", "temperature");
+				sprintf(pub_topic, "%s", "greenhouse");
 				
 				// sense the temperature
 				value = (TEMPERATURE_THRESHOLD + variation) + random_rand() % TEMPERATURE_THRESHOLD_OFFSET - TEMPERATURE_THRESHOLD_STDEV;   
