@@ -145,6 +145,8 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
 						linkaddr_node_addr.u8[2], linkaddr_node_addr.u8[5],
 						linkaddr_node_addr.u8[6], linkaddr_node_addr.u8[7]);
 
+	printf("MAC ADDRESS: %s\n", client_id);
+
 	// Broker registration					 
 	mqtt_register(&conn, &mqtt_client_example, client_id, mqtt_event, MAX_TCP_SEGMENT_SIZE);
 					
@@ -187,11 +189,12 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
 					
 			if(state == STATE_CONNECTED){
 				// Publish something
-				sprintf(pub_topic, "%s", "greenhouse");
+				sprintf(pub_topic, "%s", "temperature");
 				
 				// sense the temperature
 				value = (TEMPERATURE_THRESHOLD + variation) + random_rand() % TEMPERATURE_THRESHOLD_OFFSET - TEMPERATURE_THRESHOLD_STDEV;   
 				
+				/*
 				// retrieve the ip of the node
 				size_t size_addr = 30;
 				char ip_addr_str[size_addr];
@@ -199,9 +202,10 @@ PROCESS_THREAD(mqtt_client_example, ev, data){
         		if(uip_ds6_if.addr_list[1].isused && (state==ADDR_TENTATIVE || state == ADDR_PREFERRED)){
            			uiplib_ipaddr_snprint(ip_addr_str, size_addr, &uip_ds6_if.addr_list[1].ipaddr);
         		}
+				*/
 
 				// be careful, message too big will crash Cooja env
-				sprintf(app_buffer, "{\"app\":\"smart_greenhouse\",\n\"greenhouse_id\":1,\n\"temperature\": %d,\n\"ip\": \"%s\"}", value, ip_addr_str);
+				sprintf(app_buffer, "{\"app\":\"smart_greenhouse\",\n\"greenhouse_id\":1,\n\"temperature\": %d,\n\"MAC\": \"%s\"}", value, client_id);
 				printf("Publishing: %s\n", app_buffer);
 					
 				leds_toggle(LEDS_GREEN);
