@@ -17,7 +17,7 @@ import java.util.Arrays;
  * The MqttSubscriber class implements an MQTT subscriber that listens to a specific topic for temperature messages.
  */
 public class MqttSubscriber implements MqttCallback {
-    private final String topic ="greenhouse";
+    private final String topic ="temperature";
     private final String broker = "tcp://127.0.0.1:1883";
     private final String clientId = "SmartGreenhouse";
     private DatabaseHandler databaseHandler;
@@ -54,10 +54,10 @@ public class MqttSubscriber implements MqttCallback {
             if(app.equals("smart_greenhouse")) {
                 int greenhouseId = Integer.parseInt(requestJson.get("greenhouse_id").toString());
                 int temp = Integer.parseInt(requestJson.get("temperature").toString());
-                String ip = requestJson.get("ip").toString();
+                String mac = requestJson.get("MAC").toString();
                 double temp_double = (double) temp / 10;
                 // adding to the database
-                databaseHandler.addTemperature(temp_double, ip, greenhouseId);
+                databaseHandler.addTemperature(temp_double, mac, greenhouseId);
             }
         } catch (ParseException e) {
             System.out.println("[RELEVATION NOT RECEIVED CORRECTLY]");

@@ -75,18 +75,19 @@ public class DatabaseHandler {
      * Adds a temperature reading to the database.
      *
      * @param temp          the temperature value
-     * @param ip            the IP address of the sensor
+     * @param mac           the MAC address of the sensor
      * @param greenhouseId  the ID of the associated greenhouse
      * @return true if the temperature reading is successfully added, false otherwise
      */
-    public boolean addTemperature(double temp, String ip, int greenhouseId){
+    public boolean addTemperature(double temp, String mac, int greenhouseId){
         String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
-        String sql = "INSERT INTO SensorData(IP_Sensor, ID_Greenhouse, Temperature) values (?,?,?)";
+        String sql = "INSERT INTO SensorData(MAC, ID_Greenhouse, Topic, Value) values (?,?,?,?)";
         try (Connection co = DriverManager.getConnection(url, user, password);
              PreparedStatement pr = co.prepareStatement(sql)){
-            pr.setString(1, ip);
+            pr.setString(1, mac);
             pr.setInt(2,greenhouseId);
-            pr.setDouble(3, temp);
+            pr.setString(3,"Temperature");
+            pr.setDouble(4, temp);
             int rowsInserted = pr.executeUpdate();
             if(rowsInserted <=0){
                 System.out.println("[SENSORDATA]: No rows inserted.");
@@ -97,7 +98,7 @@ public class DatabaseHandler {
             e.printStackTrace();
             return false;
         }
-        System.out.println("[RELEVATION INSERTED]:\t From " + ip + " Value: " + temp);
+        System.out.println("[RELEVATION INSERTED]:\t From " + mac + " Value: " + temp);
         return true;
     }
     
