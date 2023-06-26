@@ -76,7 +76,7 @@ PROCESS_THREAD(client, ev, data){
     //////////////////// COAP SERVER //////////////////
 
     // Activation of a resource
-    coap_activate_resource(&res_tent, "greenhouse/tent");
+    coap_activate_resource(&res_tent, "tent");
     
     PROCESS_END();
 }
