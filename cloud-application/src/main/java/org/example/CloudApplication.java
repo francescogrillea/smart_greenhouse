@@ -16,7 +16,7 @@ public class CloudApplication{
 
         // CoAP Server that stores actuators info in a MySQL DB
         CoapServer server = new CoapServer();
-        server.add(new CoapRegistrationResource("greenhouse/registration", databaseHandler));
+        server.add(new CoapRegistrationResource("registration", databaseHandler));
         server.start();
 
         // MQTT subscriber launch
