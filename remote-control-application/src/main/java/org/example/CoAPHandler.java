@@ -21,7 +21,7 @@ public class CoAPHandler {
      */
     public void sendMessage(String resource, String command, List<String> actuatorsIPs){
         for(String s: actuatorsIPs){
-            String url = "coap://["+s+"]/greenhouse/"+resource;
+            String url = "coap://["+s+"]/"+resource;
             CoapClient client = new CoapClient(url);
             Request req = new Request(CoAP.Code.PUT);
             req.setPayload(command);
