@@ -77,7 +77,7 @@ public class DatabaseHandler {
     public List<Double> findLastTemperatures(int numRows, int greenhouseId){
         List<Double> temps = new ArrayList<>();
         String url = "jdbc:mysql://"+db_IP+":"+port+"/"+db_name;
-        String sql = "SELECT Temperature FROM SensorData WHERE ID_Greenhouse=? ORDER BY Timestamp DESC LIMIT "+numRows;
+        String sql = "SELECT Value FROM SensorData WHERE ID_Greenhouse=? AND Topic=\"Temperature\" ORDER BY Timestamp DESC LIMIT "+numRows;
         try (Connection co = DriverManager.getConnection(url, user, password);
              PreparedStatement pr = co.prepareStatement(sql)){
             pr.setInt(1,greenhouseId);

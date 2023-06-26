@@ -52,12 +52,12 @@ public class RemoteControlApplicationThread extends Thread{
             // send COAP message to actuators
             synchronized((Integer)temperatureThreshold) {
                 if (averageTemp > temperatureThreshold && tentState.equals("down")) {
-                    coapHandler.sendMessage("greenhouse/tent", "up", databaseHandler.findTentsIPs(greenhouseId));
+                    coapHandler.sendMessage("tent", "up", databaseHandler.findTentsIPs(greenhouseId));
                     tentState = "up";
                     System.out.println("[TENTS UP]");
                 }
                 if (averageTemp < temperatureThreshold && tentState.equals("up")) {
-                    coapHandler.sendMessage("greenhouse/tent", "down", databaseHandler.findTentsIPs(greenhouseId));
+                    coapHandler.sendMessage("tent", "down", databaseHandler.findTentsIPs(greenhouseId));
                     System.out.println("[TENTS DOWN]");
                     tentState = "down";
                 }

@@ -7,7 +7,7 @@ import static java.lang.System.exit;
 public class UserInputHandler
 {
     static DatabaseHandler databaseHandler;
-        static int numMillis=10000;
+    static int numMillis=10000;
     static CoAPHandler coapHandler;
     static final int greenhouseId=1;
     static String tentState="up";
@@ -44,12 +44,12 @@ public class UserInputHandler
                         input = scanner.nextInt();
                         switch (input){
                             case 1:
-                                coapHandler.sendMessage("greenhouse/tent", "up", databaseHandler.findTentsIPs(greenhouseId));
+                                coapHandler.sendMessage("tent", "up", databaseHandler.findTentsIPs(greenhouseId));
                                 System.out.println("[TENTS UP]");
                                 tentState="up";
                                 break;
                             case 2:
-                                coapHandler.sendMessage("greenhouse/tent", "down", databaseHandler.findTentsIPs(greenhouseId));
+                                coapHandler.sendMessage("tent", "down", databaseHandler.findTentsIPs(greenhouseId));
                                 System.out.println("[TENTS DOWN]");
                                 tentState="down";
                                 break;
@@ -74,6 +74,7 @@ public class UserInputHandler
                 case 3:
                     System.out.println("- Enter a new timing");
                     input=scanner.nextInt();
+                    numMillis=input;
                     remoteControlApplicationThread.changeTiming(input);
                     break;
                 case 4:
